@@ -1,0 +1,18 @@
+<%- @series_a = {20.day.ago => 5, 1368174456 => 4, "2013-05-07 00:00:00 UTC" => 7}%>
+<%- @series_b = {30.day.ago => 7, 1368174546 => 7, "2013-07-21 00:00:00 UTC" => 5}%>
+<%- @data = [["United States",44],["Germany",23],["Brazil",22],["Canada",21],["France",13]]%>
+
+<%= line_chart [
+  {name: "Series A", data: @series_a},
+  {name: "Series B", data: @series_b}
+], library: {chart: {width: '400'}} %>
+
+<%= line_chart  @data, discrete: true, library: {chart: {width: '400'}}%>
+
+<%= pie_chart({"Female" => 117, "Male" => 1160}) %>
+
+<%= bar_chart [['Other', 218],['Akhtaboot', 3194],['Career Connect', 28],['Facebook', 1], ['Twitter', 1]], library: {chart: {width: '400'}}%>
+
+<%- @country_data = [["Turkey", 8], ["Libya", 1], ["Germany", 2], ["Venezuela", 1], ["France", 1], ["Cyprus", 2], ["Bahrain", 2], ["Algeria", 7], ["Japan", 1], ["Malaysia", 1], ["Kuwait", 7], ["Spain", 1], ["Ukraine", 4], ["Jordan", 624], ["Zimbabwe", 1], ["Saudi Arabia", 106], ["India", 6], ["Brazil", 2], ["Djibouti", 1], ["Yemen", 1], ["Qatar", 10], ["Haiti", 1], ["Syria", 81], ["Russia", 2], ["Denmark", 1], ["USA", 2], ["Belgium", 1], ["Martinique", 1], ["Sudan", 9], ["Romania", 1], ["Lebanon", 14], ["Egypt", 74], ["Palestine", 167], ["Bulgaria", 2], ["Canada", 3], ["United States Minor Outlying Islands", 2], ["Australia", 2], ["Mauritania", 1], ["Angola", 1], ["Albania", 1], ["Oman", 2], ["United Kingdom", 1], ["UAE", 85], ["Tunisia", 2], ["Afghanistan", 1], ["Sweden", 2], ["Italy", 4], ["Pakistan", 2]] %>
+
+<%= geo_chart @country_data, library: {"language" => "ar", width: '400'}%>
