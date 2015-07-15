@@ -1,18 +1,81 @@
-<%- @series_a = {20.day.ago => 5, 1368174456 => 4, "2013-05-07 00:00:00 UTC" => 7}%>
-<%- @series_b = {30.day.ago => 7, 1368174546 => 7, "2013-07-21 00:00:00 UTC" => 5}%>
-<%- @data = [["United States",44],["Germany",23],["Brazil",22],["Canada",21],["France",13]]%>
+<%= area_chart [
+  {name: "Total Credits Consumed", data: @total_done},
+  {name: "Free Credits Consumed", data: @free_done},
+  {name: "Paid Credits Consumed", data: @paid_done}
+  ], discrete: true,
+  library: {chart: { type: 'area' }, title: { text: 'Credits Consumption' }, subtitle: { text: 'Source: Testello.com' }, xAxis: { categories: @total_done.keys, tickmarkPlacement: 'on', title: { enabled: false } }, yAxis: { title: { text: 'Credits' } }, tooltip: { shared: true, valueSuffix: ' Credits' }, plotOptions: { area: { stacking: 'normal', lineColor: '#666666', lineWidth: 1, marker: { lineWidth: 1, lineColor: '#666666' } } } } %>
 
-<%= line_chart [
-  {name: "Series A", data: @series_a},
-  {name: "Series B", data: @series_b}
-], library: {chart: {width: '400'}} %>
+<br>
+<hr>
+<br>
+<%= line_chart  @sessions, discrete: true, library: {chart: {zoomType: 'x'}, xAxis: {type: 'date', tickInterval: 10, tickmarkPlacement: 'on'}, title: { text: 'Sessions created per day' }, subtitle: { text: 'Source: Testello.com<br>You can zoom in to see data in detail.' }} %>
 
-<%= line_chart  @data, discrete: true, library: {chart: {width: '400'}}%>
+<br>
+<hr>
+<br>
 
-<%= pie_chart({"Female" => 117, "Male" => 1160}) %>
+<div id="container" style="min-width: 310px; max-width: 600px; height: 400px; margin: 0 auto"></div>
+<script>
+$(function () {
+    // Create the chart
+    $('#container').highcharts({
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Credits consumed on Tests'
+        },
+        subtitle: {
+            text: '<strong>Drilldown on customized</strong> tests to see how credits are being consumed.'
+        },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.y}'
+                }
+            }
+        },
 
-<%= bar_chart [['Other', 218],['Akhtaboot', 3194],['Career Connect', 28],['Facebook', 1], ['Twitter', 1]], library: {chart: {width: '400'}}%>
+        tooltip: {
+            headerFormat: '<span style="font-size:11px">{series.name}</span><br>', pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b><br/>'
+        },
+        series: <%= @data %>,
+        drilldown: <%= @drilldown %>
+  });
+});
+</script>
+
+<br>
+<hr>
+<br>
+
+
+<%= bar_chart [['Other', 218],['Akhtaboot', 3194],['Career Connect', 28],['Facebook', 1], ['Twitter', 1]], library: {title: { text: 'Jawaker: Job Application sources' }, subtitle: { text: 'Source: Akhtaboot.com' }}%>
 
 <%- @country_data = [["Turkey", 8], ["Libya", 1], ["Germany", 2], ["Venezuela", 1], ["France", 1], ["Cyprus", 2], ["Bahrain", 2], ["Algeria", 7], ["Japan", 1], ["Malaysia", 1], ["Kuwait", 7], ["Spain", 1], ["Ukraine", 4], ["Jordan", 624], ["Zimbabwe", 1], ["Saudi Arabia", 106], ["India", 6], ["Brazil", 2], ["Djibouti", 1], ["Yemen", 1], ["Qatar", 10], ["Haiti", 1], ["Syria", 81], ["Russia", 2], ["Denmark", 1], ["USA", 2], ["Belgium", 1], ["Martinique", 1], ["Sudan", 9], ["Romania", 1], ["Lebanon", 14], ["Egypt", 74], ["Palestine", 167], ["Bulgaria", 2], ["Canada", 3], ["United States Minor Outlying Islands", 2], ["Australia", 2], ["Mauritania", 1], ["Angola", 1], ["Albania", 1], ["Oman", 2], ["United Kingdom", 1], ["UAE", 85], ["Tunisia", 2], ["Afghanistan", 1], ["Sweden", 2], ["Italy", 4], ["Pakistan", 2]] %>
 
 <%= geo_chart @country_data, library: {"language" => "ar", width: '400'}%>
+
+<select id='list'>
+  <% @tests.each do |test| %>
+    <option value=<%= test.first %>><%= test.last %></option>
+  <% end %>
+</select>
+<div id='saber' style="height: 400px;">
+  <%= line_chart @results[6], discrete: true, library: {chart: { renderTo: 'saber'}, title: {text: @tests.first.last}}%>
+</div>
+
+<br>
+<hr>
+<br>
+
+<script>
+var options = {chart: {renderTo: 'saber', type: 'spline'}, series: [{name: '<%= "#{@tests.first.last}"%>', data: <%= @results[6].to_json.html_safe %>}]};
+$('#list').on('change', function(ev){
+    var v = $('#list').val();
+    var r = <%= @results.to_json.html_safe %>;
+    var chart = new Chartkick.LineChart("saber", r[v], {"colors":["#3fba8c","#bc2187","#8DE64E","#6e25a3","#4580B4","#360123","#4AB300","#79004F","#008955","#3E0369","#074883","BC2186"],"discrete":true,"library":{"chart":{"renderTo":"saber"},"title":{"text":"Tests"}}});
+    ev.preventDefault();
+});
+</script>
