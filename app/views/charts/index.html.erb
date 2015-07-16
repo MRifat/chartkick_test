@@ -1,3 +1,12 @@
+<h1>CompanyUser Charts</h1>
+<%= pie_chart @users %>
+
+<br>
+<hr>
+<br>
+
+<%= pie_chart @by_exam, library: {chart: {options3d: { enabled: true, alpha: 45, beta: 0 }}, plotOptions: {pie: {shadow: true, slicedOffset: 30, allowPointSelect: true, depth: 35, cursor: 'pointer'}}} %>
+<h1>AdminUser Charts</h1>
 <%= area_chart [
   {name: "Total Credits Consumed", data: @total_done},
   {name: "Free Credits Consumed", data: @free_done},
@@ -8,6 +17,18 @@
 <br>
 <hr>
 <br>
+
+<%= line_chart [
+  {name: "Paid stock Unused", data: @paid_unused},
+  {name: "Paid Used", data: @paid_used},
+  {name: "Paid Expired", data: @paid_expired}
+  ], discrete: true,
+  library: {chart: { type: 'area' }, title: { text: 'Credits' }, subtitle: { text: 'Source: Testello.com' }, tooltip: { shared: true} } %>
+
+<br>
+<hr>
+<br>
+
 <%= line_chart  @sessions, discrete: true, library: {chart: {zoomType: 'x'}, xAxis: {type: 'date', tickInterval: 10, tickmarkPlacement: 'on'}, title: { text: 'Sessions created per day' }, subtitle: { text: 'Source: Testello.com<br>You can zoom in to see data in detail.' }} %>
 
 <br>
@@ -63,7 +84,7 @@ $(function () {
   <% end %>
 </select>
 <div id='saber' style="height: 400px;">
-  <%= line_chart @results[6], discrete: true, library: {chart: { renderTo: 'saber'}, title: {text: @tests.first.last}}%>
+  <%= line_chart @results[6], discrete: true, library: {chart: { renderTo: 'saber'}, title: {text: @tests.first.last}, yAxis: {allowdecimals: false}}%>
 </div>
 
 <br>
@@ -71,11 +92,10 @@ $(function () {
 <br>
 
 <script>
-var options = {chart: {renderTo: 'saber', type: 'spline'}, series: [{name: '<%= "#{@tests.first.last}"%>', data: <%= @results[6].to_json.html_safe %>}]};
 $('#list').on('change', function(ev){
     var v = $('#list').val();
     var r = <%= @results.to_json.html_safe %>;
-    var chart = new Chartkick.LineChart("saber", r[v], {"colors":["#3fba8c","#bc2187","#8DE64E","#6e25a3","#4580B4","#360123","#4AB300","#79004F","#008955","#3E0369","#074883","BC2186"],"discrete":true,"library":{"chart":{"renderTo":"saber"},"title":{"text":"Tests"}}});
+    var chart = new Chartkick.LineChart("saber", r[v], {"colors":["#3fba8c","#bc2187","#8DE64E","#6e25a3","#4580B4","#360123","#4AB300","#79004F","#008955","#3E0369","#074883","BC2186"],"discrete":true,"library":{"chart":{"renderTo":"saber"},"title":{"text":"Tests"}, "yAxis": {"allowdecimals": "false"}}});
     ev.preventDefault();
 });
 </script>
